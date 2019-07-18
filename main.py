@@ -44,9 +44,16 @@ if __name__ == '__main__':
     # Click on the search button
     driver.find_element_by_id('cik_find').click()
 
+    driver.maximize_window()
+
+    # find filter input to 13F format only
+    driver.find_element_by_xpath('//*[@id="type"]').send_keys('13F')
+
+    # Click search
+    driver.find_element_by_xpath('//*[@id="contentDiv"]/div[2]/form/table/tbody/tr/td[6]/input[1]').click()
 
 
-
+    time.sleep(5)
 
     # table_id = driver.find_element_by_id('seriesDiv')
     #
@@ -105,6 +112,7 @@ if __name__ == '__main__':
         #res.append([ele for ele in cols if ele])
     #print(links)
 
+
     #To only go for the most recent, we can just focus on res[1] and links[0]
     #for some reason res[0] is this filter result text that i can't get rid of
 
@@ -135,7 +143,7 @@ if __name__ == '__main__':
 
     print(xmlUrl)
     file = urlopen(xmlUrl)
-    
+
     content = file.read().decode("utf-8")
     file.close()
 
