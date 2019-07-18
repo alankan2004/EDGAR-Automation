@@ -132,7 +132,8 @@ if __name__ == '__main__':
 
     driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[3]/td[3]/a').click()
 
-
+    #This time out is a MUST, else xmlUrl would load the previous page url
+    time.sleep(5)
 
     #half way through doing this, I realized It prob would have been better to use request,
     #since in this case it's not necessary show the simluation, but just getting the data.
@@ -141,22 +142,27 @@ if __name__ == '__main__':
 
     xmlUrl = driver.current_url
 
-    print(xmlUrl)
+    # Seems like my xmlUrl has issues that are causing the tree to not work
+
+    #content = requests.get('https://www.sec.gov/Archives/edgar/data/1166559/000110465919029714/primary_doc.xml')
+    #ontent = requests.get(xmlUrl)
+
     file = urlopen(xmlUrl)
 
     content = file.read().decode("utf-8")
     file.close()
 
-    print(content)
 
-    root = ET.fromstring(content)
+
+    root = ET.fromstring(content) # If you use requests you do content.text
 
     time.sleep(5)
 
 
+
     print('\n')
 
-
+    #print(content)
 
     #print(root.tag)
 
