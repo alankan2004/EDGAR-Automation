@@ -2,7 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import os
 
-def loadPage(cik):
+def loadCompRes(cik):
     # Locate where chromedriver is in the directory
     path = os.getcwd() + "/chromedriver"
 
@@ -54,11 +54,16 @@ def cookTheSoup(data):
             temp.append(el.text.strip())
             if el:
                 link = el.find('a', href = True)
-                #print('--------------THIS IS EL:', el.text)
                 if link:
-
-                    #print('========THIS IS LINK:', link)
                     links.append(link['href'])
                 res.append(temp)
 
     return res, links
+
+def loadFirstDoc(link, driver):
+    # We go for the first link since that's the most updated one
+    nUrl = "https://www.sec.gov"+ link
+
+    driver.get(nUrl)
+
+    driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
