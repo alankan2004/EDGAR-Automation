@@ -2,6 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import os
 from urllib.request import urlopen
+import time
 
 def loadCompRes(cik):
     # Locate where chromedriver is in the directory
@@ -67,7 +68,16 @@ def loadFirstDoc(link, driver):
 
     driver.get(nUrl)
 
+def loadXml(driver):
+    # Find the button to click on after you in the Documents
     driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
+
+    # Gotta wait to get the current url, let the page load to xml first.
+    time.sleep(5)
+
+    xmlUrl = driver.current_url
+
+    return xmlUrl
 
 def readXml(xmlUrl):
 
@@ -79,3 +89,10 @@ def readXml(xmlUrl):
     file.close()
 
     return content
+
+def countNumOfComp(root):
+    numOfComp = 0
+    for child in root:
+        numOfComp+=1
+
+    return numOfComp
