@@ -35,7 +35,7 @@ if __name__ == '__main__':
             break
 
     # Callig loadPage with Selenium from functions.py
-    driver = functions.loadPage(cik)
+    driver = functions.loadCompRes(cik)
 
     # Wait for the page to load
     time.sleep(5)
@@ -54,15 +54,17 @@ if __name__ == '__main__':
 
 
 
-    # We go for the first link since that's the most updated one
-    nUrl = "https://www.sec.gov"+ links[0]
+    # # We go for the first link since that's the most updated one
+    # nUrl = "https://www.sec.gov"+ links[0]
+    #
+    #
+    # driver.get(nUrl)
+    #
+    # time.sleep(5)
+    #
+    # driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
 
-
-    driver.get(nUrl)
-
-    time.sleep(5)
-
-    driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
+    functions.loadFirstDoc(links[0], driver)
 
     #This time out is a MUST, else xmlUrl would load the previous page url
     time.sleep(5)
@@ -75,9 +77,6 @@ if __name__ == '__main__':
     xmlUrl = driver.current_url
 
     # Seems like my xmlUrl has issues that are causing the tree to not work
-
-    #content = requests.get('https://www.sec.gov/Archives/edgar/data/1166559/000110465919029714/primary_doc.xml')
-    #ontent = requests.get(xmlUrl)
 
     file = urlopen(xmlUrl)
 
