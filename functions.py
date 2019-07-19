@@ -4,7 +4,9 @@ import os
 from urllib.request import urlopen
 import time
 
-def loadCompRes(cik):
+def load13FRes(cik):
+    # This function loads the page to the company 13F documents given a cik.
+
     # Locate where chromedriver is in the directory
     path = os.getcwd() + "/chromedriver"
 
@@ -106,3 +108,26 @@ def getColNames(root):
 
     # Returns a list of column names
     return colNames
+
+def writeTsv(fileName):
+    outputF = open(fileName,'w')
+
+    # # Make it an .tsv file
+    tsvWriter = csv.writer(outputF, delimiter='\t')
+    tsvWriter.writerow(colNames)
+
+    # In text file
+    for i in range(numOfComp):
+        text = []
+        for child in root[i]:
+            # To change newline into ''
+            d1 = child.text.strip()
+            # Not include ''
+            if d1 is not '':
+                text.append(d1)
+            for gChild in child:
+                d2 = gChild.text.strip()
+                if d2 is not '':
+                    text.append(d2)
+
+        tsvWriter.writerow(text)
