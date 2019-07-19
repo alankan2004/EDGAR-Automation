@@ -4,16 +4,9 @@
 # chromedriver must be in the same folder as the script
 # pip install
 
-from selenium import webdriver
-import os
-from bs4 import BeautifulSoup
 import time
-from urllib.request import urlopen
-import requests
 import xml.etree.ElementTree as ET
-import csv
 import functions
-#from xlsxwriter.workbook import Workbook
 
 if __name__ == '__main__':
     while 1:
@@ -35,7 +28,7 @@ if __name__ == '__main__':
             break
 
     # Callig loadPage with Selenium from functions.py
-    driver = functions.load13FRes(cik)
+    driver, compName, filing = functions.load13FRes(cik)
 
     # Wait for the page to load
     time.sleep(5)
@@ -49,8 +42,6 @@ if __name__ == '__main__':
     # The rock is coooooooooooking
     res, links = functions.cookTheSoup(data)
 
-    #To only go for the most recent, we can just focus on res[1] and links[0]
-    #for some reason res[0] is this filter result text that i can't get rid of
 
 
     # We go for the first link since that's the most updated one
@@ -62,8 +53,6 @@ if __name__ == '__main__':
     # Since the page is at the xml page now, we get the current url.
     xmlUrl = functions.loadXml(driver)
 
-    print(xmlUrl)
-
     # We read the content on the xml page given the url
     content = functions.readXml(xmlUrl)
 
@@ -72,32 +61,12 @@ if __name__ == '__main__':
 
     time.sleep(5)
 
-    numOfComp = functions.countNumOfComp(root)
-
-    colNames = functions.getColNames(root)
-
-    time.sleep(5)
-
     # I need to write a function that creats file name.
-    fileName = 'test.txt'
+    fileName = compName + '--' + filing + '--' + res[2] + '.txt'
+    fNameLs = [compName, filing, res[2]]
 
     # Write the tsv file.
-    functions.writeTsv(fileName)
+    functions.writeTsv(fileName, fNameLs, root)
 
-    # # import into excelsheet, becuase tsv file format looks kinda bad, and I tried fixing it.
-    # tsvFile = fileName
-    # xslFile = 'test.xlsx'
-
-    # # Create xlsx workbook
-    # workbook = Workbook(xslFile)
-    # worksheet = workbook.add_worksheet()
-    #
-    # tsvRead = csv.reader(open(tsvFile, 'rt'), delimiter = '\t')
-    #
-    # for f in colNames:
-    #     for i in range(numOfComp):
-    #         worksheet.write_column(i, f, tsvRead)
-
-
-
+    # Closer the webpage when finished.
     driver.quit()

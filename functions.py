@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import os
 from urllib.request import urlopen
 import time
+import csv
 
 def load13FRes(cik):
     # This function loads the page to the company 13F documents given a cik.
@@ -17,7 +18,7 @@ def load13FRes(cik):
     driver.get("https://www.sec.gov/edgar/searchedgar/companysearch.html")
 
     # Put the CIK # in
-    test = driver.find_element_by_id('cik').send_keys(cik)
+    driver.find_element_by_id('cik').send_keys(cik)
 
     # Click on the search button
     driver.find_element_by_id('cik_find').click()
@@ -25,49 +26,71 @@ def load13FRes(cik):
     # Sometimes it can cause reading errors if the window isn't maxmize
     driver.maximize_window()
 
-    # Find filter input to 13F format only
-    driver.find_element_by_xpath('//*[@id="type"]').send_keys('13F')
+    compName = driver.find_element_by_class_name('companyName').text
+
+    idx = compName.index('CIK')
+
+    # Get rid of uncessary contents
+    compName = compName[:idx].strip()
+
+    filing = '13F'
+
+    # Find filter input to 13F filing only
+    driver.find_element_by_xpath('//*[@id="type"]').send_keys(filing)
 
     # Click search for 13F format
     driver.find_element_by_xpath('//*[@id="contentDiv"]/div[2]/form/table/tbody/tr/td[6]/input[1]').click()
 
     # return the driver
-    return driver
+    return driver, compName, filing
 
 def cookTheSoup(data):
     # Creat the soup given the page data as xml format.
     soup = BeautifulSoup(data, features='xml')
 
-    # Locate the table
+    # Locate the table that have all the documents
     table = soup.find('table', {'class':'tableFile2'})
 
-
+    # Find the table body
     table_body = table.find('tbody')
 
-    rows = soup.find_all('tr')
+    # Find all the rows under the table
+    rows = table_body.find_all('tr')
 
+    # res is list of lists of each row's filing type and data recorded. EX: [13F, Documents, 2015-5-12].
     res = []
+    # links is a list of each of the row's document url, can be access by index
     links = []
-    # This can be its own function
+
+    # For some reason, the row in rows are super repetative, so I'm getting the same data over and over again.
     for row in rows:
+        # Text = True to output text, find all the values in that row, under each column.
         cols = row.find_all('td', text=True)
         temp = []
+        linkTemp =[]
         for el in cols:
 
-            #need the strip to make them more orgainzed
-            temp.append(el.text.strip())
+            # If el is not None, which I don't understand why it would be None, but it happens.
             if el:
-                link = el.find('a', href = True)
-                if link:
-                    links.append(link['href'])
-                res.append(temp)
+                temp.append(el.text.strip())
 
-    return res, links
+                # Look for the link, specifically the one with the correct id, so I don'tg et the wrong link for url.
+                # Set href = True, so those links are shown.
+                link = el.find('a', id = 'documentsbutton', href = True)
+                # If link is not None.
+                if link:
+                    linkTemp.append(link['href'])
+                res.append(temp)
+                links.append(linkTemp)
+    # So I only return the first list in res and links because the rest of the lists in res and links are redundant.
+    # But I can't figure out why it's going through extra data.
+    return res[0], links[0]
 
 def loadFirstDoc(link, driver):
     # We go for the first link since that's the most updated one
     nUrl = "https://www.sec.gov"+ link
 
+    print(nUrl)
     driver.get(nUrl)
 
 def loadXml(driver):
@@ -109,22 +132,31 @@ def getColNames(root):
     # Returns a list of column names
     return colNames
 
-def writeTsv(fileName):
+def writeTsv(fileName, fNameLs, root):
+    numOfComp = countNumOfComp(root)
+    colNames = getColNames(root)
+
     outputF = open(fileName,'w')
 
     # # Make it an .tsv file
     tsvWriter = csv.writer(outputF, delimiter='\t')
+    tsvWriter.writerow(fNameLs)
     tsvWriter.writerow(colNames)
 
     # In text file
     for i in range(numOfComp):
         text = []
         for child in root[i]:
-            # To change newline into ''
-            d1 = child.text.strip()
+            print(child.text)
+
+            if child.text is None:
+                # To change newline into ''
+                d1 = child.text
+            else:
+                d1 = child.text.strip()
             # Not include ''
-            if d1 is not '':
-                text.append(d1)
+                if d1 is not '':
+                    text.append(d1)
             for gChild in child:
                 d2 = gChild.text.strip()
                 if d2 is not '':
