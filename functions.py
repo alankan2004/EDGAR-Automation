@@ -96,3 +96,13 @@ def countNumOfComp(root):
         numOfComp+=1
 
     return numOfComp
+
+def getColNames(root):
+    colNames = []
+    for child in root[0]:
+        colNames.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+        for gChild in child:
+            colNames.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+
+    # Returns a list of column names
+    return colNames
