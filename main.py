@@ -67,25 +67,16 @@ if __name__ == '__main__':
     # We read the content on the xml page given the url
     content = functions.readXml(xmlUrl)
 
-
+    # Creat ElementTree
     root = ET.fromstring(content)
 
     time.sleep(5)
 
     numOfComp = functions.countNumOfComp(root)
 
-    colNames = []
-    for child in root[0]:
-        colNames.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-        for gChild in child:
-            colNames.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-
-    print('\n')
+    colNames = functions.getColNames(root)
 
     time.sleep(5)
-
-    print('\n')
-
 
     # Give the file a name and write to it.
     fileName = 'test.txt'
