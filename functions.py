@@ -25,3 +25,6 @@ def loadPage(cik):
 
     # Click search for 13F format
     driver.find_element_by_xpath('//*[@id="contentDiv"]/div[2]/form/table/tbody/tr/td[6]/input[1]').click()
+
+    # return the driver
+    return driver

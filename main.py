@@ -12,63 +12,61 @@ from urllib.request import urlopen
 import requests
 import xml.etree.ElementTree as ET
 import csv
-
+import functions
+#from xlsxwriter.workbook import Workbook
 
 if __name__ == '__main__':
     while 1:
         cik = input("Please Enter the CIK #: ")
 
         # Prevents invalid input
+
         try:
+            # If input isn't a combination of numbers
             int(cik)
             err = False
         except:
             print("Your CIK # is invalid")
             err = True
 
+        # If length of cik is invalid or input isn't numbers
         if len(cik) != 10 or err is True:
             print("CIK # should contain 10 digits \n")
         else:
             break
 
-    # finds the path of the current directory
-    path = os.getcwd() + "/chromedriver"
-    driver = webdriver.Chrome(executable_path = path)
+    # # finds the path of the current directory
+    # path = os.getcwd() + "/chromedriver"
+    #
+    # driver = webdriver.Chrome(executable_path = path)
+    #
+    # # Go to the EDGAR page
+    # driver.get("https://www.sec.gov/edgar/searchedgar/companysearch.html")
+    #
+    # # Put the CIK # in
+    # test = driver.find_element_by_id('cik').send_keys(cik)
+    #
+    # # Click on the search button
+    # driver.find_element_by_id('cik_find').click()
+    #
+    # # Sometimes it can cause reading errors if the window isn't maxmize
+    # driver.maximize_window()
+    #
+    # # Find filter input to 13F format only
+    # driver.find_element_by_xpath('//*[@id="type"]').send_keys('13F')
+    #
+    # # Click search for 13F format
+    # driver.find_element_by_xpath('//*[@id="contentDiv"]/div[2]/form/table/tbody/tr/td[6]/input[1]').click()
 
-    # Go to the EDGAR page
-    driver.get("https://www.sec.gov/edgar/searchedgar/companysearch.html")
+    # Callig loadPage with Selenium from functions.py
+    driver = functions.loadPage(cik)
 
-    # Put the CIK # in
-    test = driver.find_element_by_id('cik').send_keys(cik)
-
-    # Click on the search button
-    driver.find_element_by_id('cik_find').click()
-
-    driver.maximize_window()
-
-    # find filter input to 13F format only
-    driver.find_element_by_xpath('//*[@id="type"]').send_keys('13F')
-
-    # Click search
-    driver.find_element_by_xpath('//*[@id="contentDiv"]/div[2]/form/table/tbody/tr/td[6]/input[1]').click()
-
-
+    # Wait for the page to load
     time.sleep(5)
 
-    # table_id = driver.find_element_by_id('seriesDiv')
-    #
-    # rows = table_id.find_elements_by_tag_name('tr')
-    #
-    # res = []
-    # for row in rows:
-    #     cells = row.find_elements_by_tag_name('td')
-    #     for cell in cells:
-    #        res.append(cell.text.strip())
-    #
-    # print(res)
 
     # For some reason I must maxmize the window or soup won't be able to read data
-    driver.maximize_window()
+    #driver.maximize_window()
 
     # Get the URL of the current page
     url = driver.current_url
@@ -76,7 +74,7 @@ if __name__ == '__main__':
     # Wait so the driver can locate the element
     driver.implicitly_wait(10)
 
-    data = driver.page_source#.encode('utf-8').strip()
+    data = driver.page_source.encode('utf-8').strip()
 
 
     soup = BeautifulSoup(data, features='xml')
@@ -194,6 +192,7 @@ if __name__ == '__main__':
     tsvWriter = csv.writer(outputF, delimiter='\t')
     tsvWriter.writerow(colNames)
 
+    # In text file
     for i in range(numOfComp):
         text = []
         for child in root[i]:
@@ -206,7 +205,23 @@ if __name__ == '__main__':
                 d2 = gChild.text.strip()
                 if d2 is not '':
                     text.append(d2)
-        print(text)
+
         tsvWriter.writerow(text)
+
+    # # import into excelsheet, becuase tsv file format looks kinda bad, and I tried fixing it.
+    # tsvFile = fileName
+    # xslFile = 'test.xlsx'
+
+    # # Create xlsx workbook
+    # workbook = Workbook(xslFile)
+    # worksheet = workbook.add_worksheet()
+    #
+    # tsvRead = csv.reader(open(tsvFile, 'rt'), delimiter = '\t')
+    #
+    # for f in colNames:
+    #     for i in range(numOfComp):
+    #         worksheet.write_column(i, f, tsvRead)
+
+
 
     driver.quit()
