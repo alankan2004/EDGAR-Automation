@@ -59,29 +59,20 @@ if __name__ == '__main__':
     #This time out is a MUST, else xmlUrl would load the previous page url
     time.sleep(5)
 
-    #half way through doing this, I realized It prob would have been better to use request,
-    #since in this case it's not necessary show the simluation, but just getting the data.
-    # Since I'm too deep in, I would probably use Requests if I go back in time,
-    # just because it keeps opening webpage, and this case would probably be more clean.
-
     # Since the page is at the xml page now, we get the current url.
-    xmlUrl = driver.current_url
+    xmlUrl = functions.loadXml(driver)
+
+    print(xmlUrl)
 
     # We read the content on the xml page given the url
     content = functions.readXml(xmlUrl)
 
 
-    root = ET.fromstring(content) # If you use requests you do content.text
+    root = ET.fromstring(content)
 
     time.sleep(5)
 
-    print(root)
-
-    numOfComp = 0
-    for child in root:
-        numOfComp+=1
-
-    print(numOfComp)
+    numOfComp = functions.countNumOfComp(root)
 
     colNames = []
     for child in root[0]:
@@ -89,19 +80,12 @@ if __name__ == '__main__':
         for gChild in child:
             colNames.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
 
-    print(colNames)
-
-
     print('\n')
-
-    #print(content)
-
 
     time.sleep(5)
 
     print('\n')
-    #for child in root:
-    #    print(child.tag, child.attrib)
+
 
     # Give the file a name and write to it.
     fileName = 'test.txt'
