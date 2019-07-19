@@ -1,4 +1,5 @@
 from selenium import webdriver
+from bs4 import BeautifulSoup
 import os
 
 def loadPage(cik):
@@ -28,3 +29,36 @@ def loadPage(cik):
 
     # return the driver
     return driver
+
+def cookTheSoup(data):
+    # Creat the soup given the page data as xml format.
+    soup = BeautifulSoup(data, features='xml')
+
+    # Locate the table
+    table = soup.find('table', {'class':'tableFile2'})
+
+
+    table_body = table.find('tbody')
+
+    rows = soup.find_all('tr')
+
+    res = []
+    links = []
+    # This can be its own function
+    for row in rows:
+        cols = row.find_all('td', text=True)
+        temp = []
+        for el in cols:
+
+            #need the strip to make them more orgainzed
+            temp.append(el.text.strip())
+            if el:
+                link = el.find('a', href = True)
+                #print('--------------THIS IS EL:', el.text)
+                if link:
+
+                    #print('========THIS IS LINK:', link)
+                    links.append(link['href'])
+                res.append(temp)
+
+    return res, links
