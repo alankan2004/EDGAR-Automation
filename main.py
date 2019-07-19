@@ -35,7 +35,7 @@ if __name__ == '__main__':
             break
 
     # Callig loadPage with Selenium from functions.py
-    driver = functions.loadCompRes(cik)
+    driver = functions.load13FRes(cik)
 
     # Wait for the page to load
     time.sleep(5)
@@ -78,29 +78,11 @@ if __name__ == '__main__':
 
     time.sleep(5)
 
-    # Give the file a name and write to it.
+    # I need to write a function that creats file name.
     fileName = 'test.txt'
-    outputF = open(fileName,'w')
 
-    # # Make it an .tsv file
-    tsvWriter = csv.writer(outputF, delimiter='\t')
-    tsvWriter.writerow(colNames)
-
-    # In text file
-    for i in range(numOfComp):
-        text = []
-        for child in root[i]:
-            # To change newline into ''
-            d1 = child.text.strip()
-            # Not include ''
-            if d1 is not '':
-                text.append(d1)
-            for gChild in child:
-                d2 = gChild.text.strip()
-                if d2 is not '':
-                    text.append(d2)
-
-        tsvWriter.writerow(text)
+    # Write the tsv file.
+    functions.writeTsv(fileName)
 
     # # import into excelsheet, becuase tsv file format looks kinda bad, and I tried fixing it.
     # tsvFile = fileName
