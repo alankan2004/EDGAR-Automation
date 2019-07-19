@@ -1,6 +1,7 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import os
+from urllib.request import urlopen
 
 def loadCompRes(cik):
     # Locate where chromedriver is in the directory
@@ -67,3 +68,14 @@ def loadFirstDoc(link, driver):
     driver.get(nUrl)
 
     driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
+
+def readXml(xmlUrl):
+
+    file = urlopen(xmlUrl)
+
+    # Decode the data from bytes to string
+    content = file.read().decode("utf-8")
+
+    file.close()
+
+    return content
