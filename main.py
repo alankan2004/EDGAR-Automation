@@ -53,17 +53,7 @@ if __name__ == '__main__':
     #for some reason res[0] is this filter result text that i can't get rid of
 
 
-
-    # # We go for the first link since that's the most updated one
-    # nUrl = "https://www.sec.gov"+ links[0]
-    #
-    #
-    # driver.get(nUrl)
-    #
-    # time.sleep(5)
-    #
-    # driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
-
+    # We go for the first link since that's the most updated one
     functions.loadFirstDoc(links[0], driver)
 
     #This time out is a MUST, else xmlUrl would load the previous page url
@@ -74,15 +64,11 @@ if __name__ == '__main__':
     # Since I'm too deep in, I would probably use Requests if I go back in time,
     # just because it keeps opening webpage, and this case would probably be more clean.
 
+    # Since the page is at the xml page now, we get the current url.
     xmlUrl = driver.current_url
 
-    # Seems like my xmlUrl has issues that are causing the tree to not work
-
-    file = urlopen(xmlUrl)
-
-    content = file.read().decode("utf-8")
-    file.close()
-
+    # We read the content on the xml page given the url
+    content = functions.readXml(xmlUrl)
 
 
     root = ET.fromstring(content) # If you use requests you do content.text
