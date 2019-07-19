@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     time.sleep(5)
 
-    driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[3]/td[3]/a').click()
+    driver.find_element_by_xpath('//*[@id="formDiv"]/div/table/tbody/tr[5]/td[3]/a').click()
 
     #This time out is a MUST, else xmlUrl would load the previous page url
     time.sleep(5)
@@ -158,13 +158,26 @@ if __name__ == '__main__':
 
     time.sleep(5)
 
+    print(root)
+
+    numOfComp = 0
+    for child in root:
+        numOfComp+=1
+
+    print(numOfComp)
+
+    colNames = []
+    for child in root[0]:
+        colNames.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+        for gChild in child:
+            colNames.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+
+    print(colNames)
 
 
     print('\n')
 
     #print(content)
-
-    #print(root.tag)
 
 
     time.sleep(5)
@@ -174,12 +187,26 @@ if __name__ == '__main__':
     #    print(child.tag, child.attrib)
 
     # Give the file a name and write to it.
-    # fileName = 'test.txt'
-    # outputF = open(fileName,'w')
-    #
-    # # Make it an .tsv file
-    # writer = csv.writer(outputF, delimter='\t')
+    fileName = 'test.txt'
+    outputF = open(fileName,'w')
 
-    #print(writer)
+    # # Make it an .tsv file
+    tsvWriter = csv.writer(outputF, delimiter='\t')
+    tsvWriter.writerow(colNames)
+
+    for i in range(numOfComp):
+        text = []
+        for child in root[i]:
+            # To change newline into ''
+            d1 = child.text.strip()
+            # Not include ''
+            if d1 is not '':
+                text.append(d1)
+            for gChild in child:
+                d2 = gChild.text.strip()
+                if d2 is not '':
+                    text.append(d2)
+        print(text)
+        tsvWriter.writerow(text)
 
     driver.quit()
