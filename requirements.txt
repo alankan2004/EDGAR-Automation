@@ -1,0 +1,4 @@
+half way through doing this, I realized It prob would have been better to use request,
+since in this case it's not necessary show the simluation, but just getting the data.
+Since I'm too deep in, I would probably use Requests if I go back in time,
+just because it keeps opening webpage, and this case would probably be more clean.
