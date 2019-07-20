@@ -7,10 +7,28 @@
 import time
 import xml.etree.ElementTree as ET
 import functions
+import sys
 
 if __name__ == '__main__':
+
+    # Going try to install the modules for the user
+    try:
+        functions.install('selenium')
+        functions.install('BeautifulSoup4')
+        functions.install('urllib3')
+    except:
+        print("Oops, sorry you might have to pip install manually")
+
+    print('\n')
+
+
     while 1:
+        print("Enter exit to leave...\n")
+
         cik = input("Please Enter the CIK #: ")
+
+        if cik.lower() == 'exit':
+            sys.exit()
 
         # Prevents invalid input
         try:
@@ -27,11 +45,31 @@ if __name__ == '__main__':
         else:
             break
 
+    # This will be able to look at previous documents
+    while 1:
+        ith = input("Please enter the i-th most recent document you want to review, i: ")
+
+        if ith.lower() == 'exit':
+            sys.exit()
+
+        try:
+            int(ith)
+            err = False
+        except:
+            print("Invalid input.")
+            err = True
+        if err == False:
+            break
+
     # Callig loadPage with Selenium from functions.py
     driver, compName, filing = functions.load13FRes(cik)
 
+
+
     # Wait for the page to load
     time.sleep(5)
+
+
 
     # Get the URL of the current page
     url = driver.current_url
@@ -41,8 +79,6 @@ if __name__ == '__main__':
 
     # The rock is coooooooooooking
     res, links = functions.cookTheSoup(data)
-
-
 
     # We go for the first link since that's the most updated one
     functions.loadFirstDoc(links[0], driver)
@@ -61,9 +97,15 @@ if __name__ == '__main__':
 
     time.sleep(5)
 
+    idx = [i for i in range(2,len(res), 3)]
+
+
+    #idx = [i+3 for i in range(2, len(res))]
+    print(idx)
+
     # I need to write a function that creats file name.
-    fileName = compName + '--' + filing + '--' + res[2] + '.txt'
-    fNameLs = [compName, filing, res[2]]
+    fileName = compName + '--' + filing + '--' + res[idx[int(ith)-1]] + '.txt'
+    fNameLs = [compName, filing, res[idx[int(ith)-1]]]
 
     # Write the tsv file.
     functions.writeTsv(fileName, fNameLs, root)

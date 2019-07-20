@@ -134,8 +134,8 @@ def countNumOfComp(root):
 
 def getColNames(root, numOfComp):
     colNames = []
-    maxLen = -1
 
+    #maxLen = -1
     # This most outer loop is necessary, since I need to go through every single
     # entries' columns to know the actually amount there are. Since if a value is
     # Null, the column won't even apear under the infoTable in the xml file.
