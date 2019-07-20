@@ -122,19 +122,34 @@ def countNumOfComp(root):
 
     return numOfComp
 
-def getColNames(root):
+def getColNames(root, numOfComp):
     colNames = []
-    for child in root[0]:
-        colNames.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-        for gChild in child:
-            colNames.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+    maxLen = -1
 
+    # This most outer loop is necessary, since I need to go through every single
+    # entries' columns to know the actually amount there are. Since if a value is
+    # Null, the column won't even apear under the infoTable in the xml file.
+    # It's ugly and there's probably a much better way to do this.
+    for i in range(numOfComp):
+        temp = []
+        for child in root[i]:
+            temp.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+            for gChild in child:
+                temp.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+        if len(temp) > maxLen:
+            maxLs = temp
+            maxLen = len(temp)
+
+    for col in maxLs:
+        colNames.append(col)
+
+    print(colNames)
     # Returns a list of column names
     return colNames
 
 def writeTsv(fileName, fNameLs, root):
     numOfComp = countNumOfComp(root)
-    colNames = getColNames(root)
+    colNames = getColNames(root, numOfComp)
 
     outputF = open(fileName,'w')
 
@@ -147,7 +162,6 @@ def writeTsv(fileName, fNameLs, root):
     for i in range(numOfComp):
         text = []
         for child in root[i]:
-            print(child.text)
 
             if child.text is None:
                 # To change newline into ''
