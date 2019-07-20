@@ -8,6 +8,7 @@ import time
 import xml.etree.ElementTree as ET
 import functions
 import sys
+import os
 
 if __name__ == '__main__':
 
@@ -45,6 +46,9 @@ if __name__ == '__main__':
         else:
             break
 
+        # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
+        os.system('clear')
+
     # This will be able to look at previous documents
     while 1:
         ith = input("Please enter the i-th most recent document you want to review, i: ")
@@ -58,9 +62,12 @@ if __name__ == '__main__':
         except:
             print("Invalid input.")
             err = True
-        if err == False:
+        if err == False and int(ith) > 0:
             break
 
+        # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
+        os.system('clear')
+        
     # Callig loadPage with Selenium from functions.py
     driver, compName, filing = functions.load13FRes(cik)
 
@@ -87,7 +94,11 @@ if __name__ == '__main__':
     time.sleep(5)
 
     # Since the page is at the xml page now, we get the current url.
-    xmlUrl = functions.loadXml(driver)
+    try:
+        xmlUrl = functions.loadXml(driver)
+    except:
+        print("Company document doesn't not contain a information table.")
+        sys.exit()
 
     # We read the content on the xml page given the url
     content = functions.readXml(xmlUrl)
