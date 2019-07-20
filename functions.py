@@ -130,18 +130,44 @@ def getColNames(root, numOfComp):
     # entries' columns to know the actually amount there are. Since if a value is
     # Null, the column won't even apear under the infoTable in the xml file.
     # It's ugly and there's probably a much better way to do this.
-    for i in range(numOfComp):
-        temp = []
-        for child in root[i]:
-            temp.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-            for gChild in child:
-                temp.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-        if len(temp) > maxLen:
-            maxLs = temp
-            maxLen = len(temp)
 
-    for col in maxLs:
-        colNames.append(col)
+    # for i in range(numOfComp):
+    #     temp = []
+    #     for child in root[i]:
+    #         temp.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+    #         for gChild in child:
+    #             temp.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
+    #     if len(temp) > maxLen:
+    #         maxLs = temp
+    #         maxLen = len(temp)
+    #
+    # for col in maxLs:
+    #     colNames.append(col)
+
+    # I'm going to attemp to use hashTable instead
+    for i in range(numOfComp):
+        d = {}
+        for child in root[i]:
+            tag = child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', '')
+            if tag not in d:
+                d[tag] = True
+            for gChild in child:
+                subTag = gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', '')
+                # I'm just going to let it rewrite here, because I want to link the tag and subtag together,
+                # So tags that have subtags will have a value of a list.
+                if d[tag] is True:
+                    d[tag] = [subTag]
+                else:
+                    d[tag].append(subTag)
+    for key in d:
+        temp = []
+        if d[key] is not True:
+            temp.append(key + ':')
+            for val in d[key]:
+                temp.append(val)
+            colNames.append(tuple(temp))
+        else:
+            colNames.append(key)
 
     print(colNames)
     # Returns a list of column names
