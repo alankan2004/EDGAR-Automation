@@ -4,6 +4,16 @@ import os
 from urllib.request import urlopen
 import time
 import csv
+try:
+    from pip import main as pipmain
+except:
+    from pip._internal import main as pipmain
+
+def install(package):
+    if hasattr(pipmain, 'main'):
+        pipmain(['install', package])
+    else:
+        pipmain(['install', package])
 
 def load13FRes(cik):
     # This function loads the page to the company 13F documents given a cik.
