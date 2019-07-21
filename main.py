@@ -28,6 +28,8 @@ if __name__ == '__main__':
 
         cik = input("Please Enter the CIK #: ")
 
+        print('\n')
+
         if cik.lower() == 'exit':
             sys.exit()
 
@@ -51,7 +53,7 @@ if __name__ == '__main__':
 
     # This will be able to look at previous documents
     while 1:
-        ith = input("Please enter the i-th most recent document you want to review, i: ")
+        ith = input("Please enter the i-th most recent report you want to review, i: ")
 
         if ith.lower() == 'exit':
             sys.exit()
@@ -67,7 +69,7 @@ if __name__ == '__main__':
 
         # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
         os.system('clear')
-        
+
     # Callig loadPage with Selenium from functions.py
     driver, compName, filing = functions.load13FRes(cik)
 
@@ -109,10 +111,6 @@ if __name__ == '__main__':
     time.sleep(5)
 
     idx = [i for i in range(2,len(res), 3)]
-
-
-    #idx = [i+3 for i in range(2, len(res))]
-    print(idx)
 
     # I need to write a function that creats file name.
     fileName = compName + '--' + filing + '--' + res[idx[int(ith)-1]] + '.txt'

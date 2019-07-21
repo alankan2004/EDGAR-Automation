@@ -100,7 +100,6 @@ def loadFirstDoc(link, driver):
     # We go for the first link since that's the most updated one
     nUrl = "https://www.sec.gov"+ link
 
-    print(nUrl)
     driver.get(nUrl)
 
 def loadXml(driver):
@@ -179,7 +178,6 @@ def getColNames(root, numOfComp):
         else:
             colNames.append(key)
 
-    print(colNames)
     # Returns a list of column names
     return colNames
 
