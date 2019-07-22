@@ -4,6 +4,8 @@ import os
 from urllib.request import urlopen
 import time
 import csv
+import ssl
+
 try:
     from pip import main as pipmain
 except:
@@ -57,7 +59,7 @@ def load13FRes(cik):
 
 def cookTheSoup(data):
     # Creat the soup given the page data as xml format.
-    soup = BeautifulSoup(data, features='xml')
+    soup = BeautifulSoup(data, features='html.parser')
 
     # Locate the table that have all the documents
     table = soup.find('table', {'class':'tableFile2'})
@@ -118,6 +120,9 @@ def loadXml(driver):
     return xmlUrl
 
 def readXml(xmlUrl):
+
+    # Apparently there's this verification failed error when I run on a different computer.
+    ssl._create_default_https_context = ssl._create_unverified_context
 
     # Open the page where the infoTable.xml is.
     file = urlopen(xmlUrl)
