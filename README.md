@@ -29,7 +29,7 @@ In terminal or command prompt...
 python3 main.py
 ```
 
-### Feature TODO
+### Feature
 * Auto install modules.
 * Ability to review previous reports. (Well, only up to previous 40 reports right now, explained more below.)
 

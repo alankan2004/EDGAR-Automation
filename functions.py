@@ -10,6 +10,7 @@ except:
     from pip._internal import main as pipmain
 
 def install(package):
+    # Installs the modules
     if hasattr(pipmain, 'main'):
         pipmain(['install', package])
     else:
@@ -83,23 +84,26 @@ def cookTheSoup(data):
             # If el is not None, which I don't understand why it would be None, but it happens.
             if el:
                 temp.append(el.text.strip())
-
                 # Look for the link, specifically the one with the correct id, so I don'tg et the wrong link for url.
                 # Set href = True, so those links are shown.
                 link = el.find('a', id = 'documentsbutton', href = True)
+
                 # If link is not None.
                 if link:
                     linkTemp.append(link['href'])
                 res.append(temp)
                 links.append(linkTemp)
+
     # So I only return the first list in res and links because the rest of the lists in res and links are redundant.
     # But I can't figure out why it's going through extra data.
+    # res[0] and links[0] do include most recent and previous dates and links(well up to 40).
     return res[0], links[0]
 
-def loadFirstDoc(link, driver):
-    # We go for the first link since that's the most updated one
+def loadDoc(link, driver):
+    # link is which ever one asked
     nUrl = "https://www.sec.gov"+ link
 
+    # Return that url for webdriver to load
     driver.get(nUrl)
 
 def loadXml(driver):
@@ -128,6 +132,7 @@ def readXml(xmlUrl):
 
 def countNumOfComp(root):
     numOfComp = 0
+    # Count number of companies, which is the child tags under the root tag.
     for child in root:
         numOfComp+=1
 
@@ -140,17 +145,23 @@ def getColNames(root, numOfComp):
     for i in range(numOfComp):
         d = {}
         for child in root[i]:
+            # Clean up the tag name, becuase the column names have this link in front of them.
             tag = child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', '')
             if tag not in d:
+                # Just signing the values to True for no reason.
                 d[tag] = True
             for gChild in child:
+                # Clean up the tag name, becuase the column names have this link in front of them.
                 subTag = gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', '')
+
                 # I'm just going to let it rewrite here, because I want to link the tag and subtag together,
                 # So tags that have subtags will have a value of a list.
                 if d[tag] is True:
                     d[tag] = [subTag]
                 else:
                     d[tag].append(subTag)
+
+    # Trying to group the tag and the sub-tags together.
     for key in d:
         temp = []
         if d[key] is not True:
@@ -170,12 +181,16 @@ def writeTsv(fileName, fNameLs, root):
 
     outputF = open(fileName,'w')
 
-    # # Make it an .tsv file
+    # Make it an .tsv file
     tsvWriter = csv.writer(outputF, delimiter='\t')
+
+    # Write the comp name, filling type and the data at the top.
     tsvWriter.writerow(fNameLs)
+
+    # Writing the column names
     tsvWriter.writerow(colNames)
 
-    # In text file
+    # Write content under tags and content under sub-tags to tsv file.
     for i in range(numOfComp):
         text = []
         for child in root[i]:
@@ -185,7 +200,7 @@ def writeTsv(fileName, fNameLs, root):
                 d1 = child.text
             else:
                 d1 = child.text.strip()
-            # Not include ''
+                # Not include ''
                 if d1 is not '':
                     text.append(d1)
             for gChild in child:

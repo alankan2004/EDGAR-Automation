@@ -83,7 +83,7 @@ if __name__ == '__main__':
     res, links = functions.cookTheSoup(data)
 
     # We go for the first link since that's the most updated one
-    functions.loadFirstDoc(links[0], driver)
+    functions.loadDoc(links[0], driver)
 
     #This time out is a MUST, else xmlUrl would load the previous page url
     time.sleep(5)
