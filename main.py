@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
 
     # Wait for the page to load
-    time.sleep(5)
+    time.sleep(3)
 
 
     # Get the URL of the current page
@@ -86,13 +86,14 @@ if __name__ == '__main__':
     functions.loadDoc(links[0], driver)
 
     #This time out is a MUST, else xmlUrl would load the previous page url
-    time.sleep(5)
+    time.sleep(3)
 
     # Since the page is at the xml page now, we get the current url.
     try:
         xmlUrl = functions.loadXml(driver)
     except:
         print("Company document doesn't not contain a information table.")
+        driver.quit()
         sys.exit()
 
     # We read the content on the xml page given the url
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     # Creat ElementTree
     root = ET.fromstring(content)
 
-    time.sleep(5)
+    time.sleep(3)
 
     # idx is a list that has all the index of previous reports dates in res.
     idx = [i for i in range(2,len(res), 3)]
