@@ -115,11 +115,13 @@ def loadXml(driver):
 
 def readXml(xmlUrl):
 
+    # Open the page where the infoTable.xml is.
     file = urlopen(xmlUrl)
 
     # Decode the data from bytes to string
     content = file.read().decode("utf-8")
 
+    # Close the file when done reading.
     file.close()
 
     return content
@@ -133,25 +135,6 @@ def countNumOfComp(root):
 
 def getColNames(root, numOfComp):
     colNames = []
-
-    #maxLen = -1
-    # This most outer loop is necessary, since I need to go through every single
-    # entries' columns to know the actually amount there are. Since if a value is
-    # Null, the column won't even apear under the infoTable in the xml file.
-    # It's ugly and there's probably a much better way to do this.
-
-    # for i in range(numOfComp):
-    #     temp = []
-    #     for child in root[i]:
-    #         temp.append(child.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-    #         for gChild in child:
-    #             temp.append(gChild.tag.replace('{http://www.sec.gov/edgar/document/thirteenf/informationtable}', ''))
-    #     if len(temp) > maxLen:
-    #         maxLs = temp
-    #         maxLen = len(temp)
-    #
-    # for col in maxLs:
-    #     colNames.append(col)
 
     # I'm going to attemp to use hashTable instead
     for i in range(numOfComp):

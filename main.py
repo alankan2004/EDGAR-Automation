@@ -1,9 +1,3 @@
-# Requirments
-# Python3
-# chromedriver downloaded from selenium website
-# chromedriver must be in the same folder as the script
-# pip install
-
 import time
 import xml.etree.ElementTree as ET
 import functions
@@ -51,7 +45,7 @@ if __name__ == '__main__':
         # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
         os.system('clear')
 
-    # This will be able to look at previous documents
+
     while 1:
         ith = input("Please enter the i-th most recent report you want to review, i: ")
 
@@ -77,7 +71,6 @@ if __name__ == '__main__':
 
     # Wait for the page to load
     time.sleep(5)
-
 
 
     # Get the URL of the current page
@@ -110,9 +103,10 @@ if __name__ == '__main__':
 
     time.sleep(5)
 
+    # idx is a list that has all the index of previous reports dates in res.
     idx = [i for i in range(2,len(res), 3)]
 
-    # I need to write a function that creats file name.
+    # Writing up the file name here. The value for ith is being used here.
     fileName = compName + '--' + filing + '--' + res[idx[int(ith)-1]] + '.txt'
     fNameLs = [compName, filing, res[idx[int(ith)-1]]]
 
