@@ -22,7 +22,6 @@ if __name__ == '__main__':
 
         cik = input("Please Enter the CIK #: ")
 
-        print('\n')
 
         if cik.lower() == 'exit':
             sys.exit()
@@ -33,17 +32,19 @@ if __name__ == '__main__':
             int(cik)
             err = False
         except:
+            # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
+            os.system('clear')
+
             print("Your CIK # is invalid")
             err = True
 
         # If length of cik is invalid or input isn't numbers, make sure no extra space.
         if len(cik) != 10 or err is True:
             print("CIK # should contain 10 digits \n")
+
         else:
             break
 
-        # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
-        os.system('clear')
 
 
     while 1:
@@ -52,17 +53,27 @@ if __name__ == '__main__':
         if ith.lower() == 'exit':
             sys.exit()
 
+        # I can only get to 1st to 40th reports right now.
+
+
         try:
             int(ith)
             err = False
         except:
+            # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
+            os.system('clear')
+
             print("Invalid input.")
             err = True
+
+        if int(ith) > 40:
+            print("Currently don't support i > 40")
+            err = True
+
         if err == False and int(ith) > 0:
             break
 
-        # Clear the input buffer, so if the previous try is invalid, it doesn't carry over.
-        os.system('clear')
+
 
     # Callig loadPage with Selenium from functions.py
     driver, compName, filing = functions.load13FRes(cik)
