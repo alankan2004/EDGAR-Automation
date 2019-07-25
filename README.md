@@ -79,6 +79,8 @@ Another problem with the format is the column names, so some columns have sub-co
 So I just end up grouping those columns together, so if a column has sub-columns, I put them in a tuple, but the user will have to know the entries are suppose to be under the sub-columns not the main column, if a column has sub-columns.
 
 * More try & excepts for catching errors.
+* Using request instead of Selenium.
+As I was half way through the project, I realized it's probably better to use request than selenium for this project. Since selenium requires the user to have Google Chrome, and it loads the webpage, which isn't necessary in this case, requests would be cleaner.
 * Optimize the code.
 * Maybe also save the tsv file in Excel for better reading.
 * Asks for extra input for the filling type, then no longer limits to 13F files.
